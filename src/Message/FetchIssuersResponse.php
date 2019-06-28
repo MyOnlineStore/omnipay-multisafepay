@@ -5,18 +5,21 @@
 
 namespace Omnipay\MultiSafepay\Message;
 
+use Omnipay\Common\Issuer;
+use Omnipay\Common\Message\FetchIssuersResponseInterface;
+
 /**
  * MultiSafepay XML Api Fetch Issuers Response.
  *
  * @deprecated This API is deprecated and will be removed in
  * an upcoming version of this package. Please switch to the Rest API.
  */
-class FetchIssuersResponse extends AbstractResponse
+class FetchIssuersResponse extends AbstractResponse implements FetchIssuersResponseInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return isset($this->data->issuers);
     }
@@ -24,16 +27,19 @@ class FetchIssuersResponse extends AbstractResponse
     /**
      * Return available issuers as an associative array.
      *
-     * @return array
+     * @return Issuer[]
      */
-    public function getIssuers()
+    public function getIssuers(): array
     {
-        $result = array();
+        $issuers = [];
 
         foreach ($this->data->issuers->issuer as $issuer) {
-            $result[(string) $issuer->code] = (string) $issuer->description;
+            $issuers[] = new Issuer(
+                (string) $issuer->code,
+                (string) $issuer->description
+            );
         }
 
-        return $result;
+        return $issuers;
     }
 }
