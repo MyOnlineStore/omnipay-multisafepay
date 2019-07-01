@@ -19,7 +19,7 @@ class FetchIssuersResponse extends AbstractResponse implements FetchIssuersRespo
     /**
      * {@inheritdoc}
      */
-    public function isSuccessful(): bool
+    public function isSuccessful()
     {
         return isset($this->data->issuers);
     }
@@ -29,7 +29,7 @@ class FetchIssuersResponse extends AbstractResponse implements FetchIssuersRespo
      *
      * @return Issuer[]
      */
-    public function getIssuers(): array
+    public function getIssuers()
     {
         $issuers = [];
 
