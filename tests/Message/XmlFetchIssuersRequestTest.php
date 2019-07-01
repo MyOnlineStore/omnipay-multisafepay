@@ -2,6 +2,7 @@
 
 namespace Omnipay\MultiSafepay\Message;
 
+use Omnipay\Common\Issuer;
 use Omnipay\Tests\TestCase;
 
 class XmlFetchIssuersRequestTest extends TestCase
@@ -65,22 +66,22 @@ class XmlFetchIssuersRequestTest extends TestCase
 
     public function issuersProvider()
     {
-        return array(
-            array(
-                array(
-                    '0031' => 'ABN AMRO',
-                    '0751' => 'SNS Bank',
-                    '0721' => 'ING',
-                    '0021' => 'Rabobank',
-                    '0091' => 'Friesland Bank',
-                    '0761' => 'ASN Bank',
-                    '0771' => 'SNS Regio Bank',
-                    '0511' => 'Triodos Bank',
-                    '0161' => 'Van Lanschot Bankiers',
-                    '0801' => 'Knab',
-                ),
-            ),
-        );
+        return [
+            [
+                [
+                    new Issuer('0031', 'ABN AMRO'),
+                    new Issuer('0751', 'SNS Bank'),
+                    new Issuer('0721', 'ING'),
+                    new Issuer('0021', 'Rabobank'),
+                    new Issuer('0091', 'Friesland Bank'),
+                    new Issuer('0761', 'ASN Bank'),
+                    new Issuer('0771', 'SNS Regio Bank'),
+                    new Issuer('0511', 'Triodos Bank'),
+                    new Issuer('0161', 'Van Lanschot Bankiers'),
+                    new Issuer('0801', 'Knab'),
+                ],
+            ],
+        ];
     }
 
     public function dataProvider()
