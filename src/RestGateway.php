@@ -6,6 +6,7 @@
 namespace Omnipay\MultiSafepay;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\MultiSafepay\Message\RestCancelOrderRequest;
 
 /**
  * MultiSafepay REST Api gateway.
@@ -254,5 +255,10 @@ class RestGateway extends AbstractGateway
             'Omnipay\MultiSafepay\Message\RestCompletePurchaseRequest',
             $parameters
         );
+    }
+
+    public function void(array $parameters = [])
+    {
+        return $this->createRequest(RestCancelOrderRequest::class, $parameters);
     }
 }

@@ -27,7 +27,8 @@
         "psr-4": { "Omnipay\\MultiSafepay\\" : "src/" }
     },
     "require": {
-        "omnipay/common": "^3"
+        "omnipay/common": "^3",
+        "ext-json": "*"
     },
     "require-dev": {
         "omnipay/tests": "^3",

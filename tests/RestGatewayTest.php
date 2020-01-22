@@ -1,5 +1,6 @@
 <?php namespace Omnipay\MultiSafepay;
 
+use Omnipay\MultiSafepay\Message\RestCancelOrderRequest;
 use Omnipay\Tests\GatewayTestCase;
 
 class RestGatewayTest extends GatewayTestCase
@@ -55,5 +56,13 @@ class RestGatewayTest extends GatewayTestCase
 
         $this->assertInstanceOf('Omnipay\MultiSafepay\Message\RestCompletePurchaseRequest', $request);
         $this->assertEquals($request->getAmount(), 10.00);
+    }
+
+    public function testVoid()
+    {
+        $request = $this->gateway->void(['transactionId' => 'barfoo']);
+
+        self::assertInstanceOf(RestCancelOrderRequest::class, $request);
+        self::assertEquals('barfoo', $request->getTransactionId());
     }
 }
