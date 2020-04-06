@@ -24,6 +24,17 @@ namespace Omnipay\MultiSafepay\Message;
 class RestFetchTransactionResponse extends RestAbstractResponse
 {
     /**
+     * Is the response successful?
+     *
+     * @return boolean
+     */
+    public function isSuccessful()
+    {
+        // MSP returns a successful response for orders that do not exist (have no id)
+        return parent::isSuccessful() && null !== $this->getTransactionId();
+    }
+
+    /**
      * Is the payment created, but uncompleted?
      *
      * @return boolean
