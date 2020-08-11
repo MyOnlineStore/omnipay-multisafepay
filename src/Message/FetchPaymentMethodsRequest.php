@@ -1,74 +1,77 @@
 <?php
-/**
- * MultiSafepay XML Api Fetch Payment Methods Request.
- */
-namespace Omnipay\MultiSafepay\Message;
+declare(strict_types=1);
 
-use SimpleXMLElement;
+namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
+
+use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * MultiSafepay XML Api Fetch Payment Methods Request.
+ * MultiSafepay Rest Api Fetch Payments Methods Request.
  *
- * @deprecated This API is deprecated and will be removed in
- * an upcoming version of this package. Please switch to the Rest API.
+ * The MultiSafepay API supports multiple payment gateways, such as
+ * iDEAL, Paypal or CreditCard. This request provides a list
+ * of all supported payment methods.
+ *
+ * ### Example
+ *
+ * <code>
+ *    $request = $gateway->fetchPaymentMethods();
+ *    $response = $request->send();
+ *    $paymentMethods = $response->getPaymentMethods();
+ *    print_r($paymentMethods);
+ * </code>
+ *
+ * @link https://www.multisafepay.com/documentation/doc/API-Reference
  */
-class FetchPaymentMethodsRequest extends AbstractRequest
+final class FetchPaymentMethodsRequest extends Request
 {
     /**
      * Get the country.
-     *
-     * @return mixed
      */
-    public function getCountry()
+    public function getCountry(): ?string
     {
         return $this->getParameter('country');
     }
 
     /**
      * Set the country.
-     *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
      */
-    public function setCountry($value)
+    public function setCountry(string $value): AbstractRequest
     {
         return $this->setParameter('country', $value);
     }
 
     /**
-     * {@inheritdoc}
+     * Get the required data for the API request.
+     *
+     * @return mixed[]
      */
-    public function getData()
+    public function getData(): array
     {
-        $data = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><gateways/>');
-        $data->addAttribute('ua', $this->userAgent);
-
-        $merchant = $data->addChild('merchant');
-        $merchant->addChild('account', $this->getAccountId());
-        $merchant->addChild('site_id', $this->getSiteId());
-        $merchant->addChild('site_secure_code', $this->getSiteCode());
-
-        $customer = $data->addChild('customer');
-        $customer->addChild('country', $this->getCountry());
-
-        return $data;
+        return \array_filter(
+            [
+                'amount' => $this->getAmountInteger(),
+                'country' => $this->getCountry(),
+                'currency' => $this->getCurrency(),
+            ]
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * Execute the API request.
+     *
+     * @param mixed $data
+     *
+     * @throws InvalidRequestException
      */
-    public function sendData($data)
+    public function sendData($data): FetchPaymentMethodsResponse
     {
-        $httpResponse = $this->httpClient->request(
-            'POST',
-            $this->getEndpoint(),
-            $this->getHeaders(),
-            $data->asXML()
-        );
+        $httpResponse = $this->sendRequest('GET', '/gateways', \json_encode($data));
 
         $this->response = new FetchPaymentMethodsResponse(
             $this,
-            simplexml_load_string($httpResponse->getBody()->getContents())
+            \json_decode($httpResponse->getBody()->getContents(), true)
         );
 
         return $this->response;

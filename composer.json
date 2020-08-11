@@ -1,5 +1,5 @@
 {
-    "name": "omnipay/multisafepay",
+    "name": "myonlinestore/omnipay-multisafepay",
     "type": "library",
     "description": "MultiSafepay driver for the Omnipay payment processing library",
     "keywords": [
@@ -24,19 +24,33 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Omnipay\\MultiSafepay\\" : "src/" }
+        "psr-4": {
+            "MyOnlineStore\\Omnipay\\MultiSafepay\\": "src/"
+        }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "MyOnlineStore\\Omnipay\\MultiSafepay\\Tests\\": "tests/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/MyOnlineStore/omnipay-tests"
+        }
+    ],
     "require": {
+        "php": "^7.2",
         "omnipay/common": "^3",
         "ext-json": "*"
     },
     "require-dev": {
-        "omnipay/tests": "^3",
-        "squizlabs/php_codesniffer": "^3"
+        "myonlinestore/coding-standard": "^2.0",
+        "omnipay/tests": "dev-phpunit-8-9",
+        "phpunit/phpunit": "^8.0",
+        "vimeo/psalm": "^3.13"
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.0.x-dev"
-        }
+    "config": {
+        "sort-packages": true
     }
 }

@@ -1,44 +1,141 @@
 <?php
-/**
- * MultiSafepay XML Api Purchase Request.
- */
+declare(strict_types=1);
 
-namespace Omnipay\MultiSafepay\Message;
+namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 
-use Omnipay\Common\CreditCard;
-use SimpleXMLElement;
+use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\Common\Message\AbstractRequest;
 
 /**
- * MultiSafepay XML Api Purchase Request.
+ * MultiSafepay Rest Api Purchase Request.
  *
- * @deprecated This API is deprecated and will be removed in
- * an upcoming version of this package. Please switch to the Rest API.
+ * The payment request allows the merchant to charge a customer.
+ *
+ * ### Redirect vs Direct Payments
+ *
+ * A redirect payment is the standard payment process.
+ * During a redirect payment the consumer is redirected to
+ * MultiSafepay's secure Hosted Payment Pages to enter their
+ * payment details and is suitable for most scenarios. If you
+ * prefer greater control over your checkout process you should
+ * use direct payments. During a direct payment the consumer
+ * does not need to visit MultiSafepay Hosted Payment Pages.
+ * Instead your website collects the requirement payment details
+ * and the consumer is redirect immediately to their chosen payment
+ * provider.
+ *
+ * ### Create Card
+ *
+ * <code>
+ *    // Create a credit card object
+ *    $card = new CreditCard(array(
+ *       'firstName'     => 'Example',
+ *       'lastName'      => 'Customer',
+ *       'number'        => '4222222222222222',
+ *       'expiryMonth'   => '01',
+ *       'expiryYear'    => '2020',
+ *       'cvv'           => '123',
+ *       'email'         => 'customer@example.com',
+ *       'address1'      => '1 Scrubby Creek Road',
+ *       'country'       => 'AU',
+ *       'city'          => 'Scrubby Creek',
+ *       'postalcode'    => '4999',
+ *       'state'         => 'QLD',
+ *    ));
+ * </code>
+ *
+ * ### Initialize a "redirect" payment.
+ *
+ * The customer will be redirected to the MultiSafepay website
+ * where they need to enter their payment details.
+ *
+ * <code>
+ *    $request = $gateway->purchase();
+ *
+ *    $request->setAmount('20.00');
+ *    $request->setTransactionId('TEST-TRANSACTION');
+ *    $request->setDescription('Test transaction');
+ *
+ *    $request->setCurrency('EUR');
+ *    $request->setType('redirect');
+ *
+ *    $response = $request->send();
+ *    var_dump($response->getData());
+ * </code>
+ *
+ * ### Initialize a "direct" payment.
+ *
+ * The merchant website need to collect the payment details, so
+ * the user can stay at the merchant website.
+ *
+ * <code>
+ *    $request = $gateway->purchase();
+ *
+ *    $request->setAmount('20.00');
+ *    $request->setTransactionId('TEST-TRANSACTION');
+ *    $request->setDescription('Test transaction');
+ *
+ *    $request->setCurrency('EUR');
+ *    $request->setType('direct');
+ *    $request->setCard($card);
+ *
+ *    $request->setGateway('IDEAL');
+ *    $request->setIssuer('ISSUER-ID'); // This ID can be found, with the RestFetchIssuersRequest.
+ *
+ *    $response = $request->send();
+ *    var_dump($response->getData());
+ * </code>
  */
-class PurchaseRequest extends AbstractRequest
+class PurchaseRequest extends Request
 {
     /**
-     * Get the language.
+     * Get payment type.
      *
-     * @return mixed
+     * Specifies the payment flow for the checkout process.
      */
-    public function getLanguage()
+    public function getType(): ?string
     {
-        return $this->getParameter('language');
+        return $this->getParameter('type');
     }
 
     /**
-     * Set the language.
+     * Set payment type.
      *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * Specifies the payment flow for the checkout process.
+     * Possible values are 'redirect', 'direct'
      */
-    public function setLanguage($value)
+    public function setType(string $value): AbstractRequest
     {
-        return $this->setParameter('language', $value);
+        return $this->setParameter('type', $value);
+    }
+
+    /**
+     * Get recurring Payment Id
+     *
+     * A previously stored identifier referring to a
+     * payment method to be charged again.
+     */
+    public function getRecurringId(): ?int
+    {
+        return $this->getParameter('recurring_id');
+    }
+
+    /**
+     * Set recurring Payment Id
+     *
+     * A previously stored identifier referring to a
+     * payment method to be charged again.
+     */
+    public function setRecurringId(int $value): AbstractRequest
+    {
+        return $this->setParameter('recurring_id', $value);
     }
 
     /**
      * Get the gateway.
+     *
+     * The unique gateway id to immediately direct the customer to the payment method.
+     * You retrieve these gateways using a gateway request.
      *
      * @return mixed
      */
@@ -50,242 +147,386 @@ class PurchaseRequest extends AbstractRequest
     /**
      * Set the gateway.
      *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * The unique gateway id to immediately direct the customer to the payment method.
+     * You retrieve these gateways using a gateway request.
+     *
+     * @param mixed $value
      */
-    public function setGateway($value)
+    public function setGateway($value): AbstractRequest
     {
         return $this->setParameter('gateway', $value);
     }
 
     /**
-     * Get Issuer.
+     * Get value of var1.
      *
-     * @return mixed
+     * A free variable for custom data to be stored and persisted.
      */
-    public function getIssuer()
+    public function getVar1(): ?string
     {
-        return $this->getParameter('issuer');
+        return $this->getParameter('var1');
     }
 
     /**
-     * Set issuer.
+     * Set var1.
      *
-     * @param string $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * A free optional variable for custom data to be stored and persisted.
      */
-    public function setIssuer($value)
+    public function setVar1(string $value): AbstractRequest
     {
-        return $this->setParameter('issuer', $value);
+        return $this->setParameter('var1', $value);
     }
 
     /**
-     * Get the Google analytics code.
+     * Get var2.
      *
-     * @return mixed
+     * A free variable for custom data to be stored and persisted.
      */
-    public function getGoogleAnalyticsCode()
+    public function getVar2(): ?string
     {
-        return $this->getParameter('googleAnalyticsCode');
+        return $this->getParameter('var2');
     }
 
     /**
-     * Set the Google analytics code.
+     * Set var2.
      *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * A free variable for custom data to be stored and persisted.
      */
-    public function setGoogleAnalyticsCode($value)
+    public function setVar2(string $value): AbstractRequest
     {
-        return $this->setParameter('googleAnalyticsCode', $value);
+        return $this->setParameter('var2', $value);
     }
 
     /**
-     * Get the value of "extradata1"
+     * Get var3.
      *
-     * @return mixed
+     * A free variable for custom data to be stored and persisted.
      */
-    public function getExtraData1()
+    public function getVar3(): ?string
     {
-        return $this->getParameter('extraData1');
+        return $this->getParameter('var3');
     }
 
     /**
-     * Set the value of "extradata1"
+     * Set var3.
      *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * A free variable for custom data to be stored and persisted.
      */
-    public function setExtraData1($value)
+    public function setVar3(string $value): AbstractRequest
     {
-        return $this->setParameter('extraData1', $value);
+        return $this->setParameter('var3', $value);
     }
 
     /**
-     * Get the value of "extradata2"
+     * Get manual.
      *
-     * @return mixed
+     * If true this forces a credit card transaction to require manual
+     * acceptance regardless of the outcome from fraud checks.
+     * It is possible that a high risk transaction is still declined.
      */
-    public function getExtraData2()
+    public function getManual(): ?bool
     {
-        return $this->getParameter('extraData2');
+        return $this->getParameter('manual');
     }
 
     /**
-     * Set the value of "extraData2
+     * Set manual.
      *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * If true this forces a credit card transaction to require manual
+     * acceptance regardless of the outcome from fraud checks.
+     * It is possible that a high risk transaction is still declined.
      */
-    public function setExtraData2($value)
+    public function setManual(bool $value): AbstractRequest
     {
-        return $this->setParameter('extraData2', $value);
+        return $this->setParameter('manual', $value);
     }
 
     /**
-     * Get the value of "extraData3"
+     * Get days active.
      *
-     * @return mixed
+     * The number of days the payment link will be active for.
+     * When not specified the default will be 30 days.
      */
-    public function getExtraData3()
+    public function getDaysActive(): ?int
     {
-        return $this->getParameter('extraData3');
+        return $this->getParameter('days_active');
     }
 
     /**
-     * Set the value of "extraData3"
+     * Set days active.
      *
-     * @param $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * The number of days the payment link will be active for.
+     * When not specified the default will be 30 days.
      */
-    public function setExtraData3($value)
+    public function setDaysActive(int $value): AbstractRequest
     {
-        return $this->setParameter('extraData3', $value);
+        return $this->setParameter('days_active', $value);
     }
 
     /**
-     * Get the items.
+     * Get close window.
      *
-     * @return mixed
+     * Set to true if you will display the MultiSafepay payment
+     * page in a new window and want it to close automatically
+     * after the payment process has been completed.
      */
-    public function getItems()
+    public function getCloseWindow(): ?bool
     {
-        return $this->getParameter('items');
+        return $this->getParameter('close_window');
     }
 
     /**
-     * Set the items.
+     * Set close window.
      *
-     * @param array|\Omnipay\Common\ItemBag $value
-     * @return \Omnipay\Common\Message\AbstractRequest
+     * Set to true if you will display the MultiSafepay payment
+     * page in a new window and want it to close automatically
+     * after the payment process has been completed.
      */
-    public function setItems($value)
+    public function setCloseWindow(bool $value): AbstractRequest
     {
-        return $this->setParameter('items', $value);
+        return $this->setParameter('close_window', $value);
     }
 
     /**
-     * {@inheritdoc}
+     * Send mail.
+     *
+     * True if you will send your own bank transfer payment instructions to
+     * consumers and do not want MultiSafepay to do this.
      */
-    public function getData()
+    public function getSendMail(): bool
     {
-        $this->validate('transactionId', 'amount', 'currency', 'description', 'clientIp', 'card');
+        return $this->getParameter('disable_send_mail');
+    }
 
-        if ('IDEAL' === $this->getGateway() && $this->getIssuer()) {
-            $data = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><directtransaction/>');
-        } else {
-            $data = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><redirecttransaction/>');
+    /**
+     * Send mail.
+     *
+     * True if you will send your own bank transfer payment instructions to
+     * consumers and do not want MultiSafepay to do this.
+     */
+    public function setSendMail(bool $value): AbstractRequest
+    {
+        return $this->setParameter('disable_send_mail', $value);
+    }
+
+    /**
+     * Google analytics code.
+     *
+     * Your Google Analytics Site Id.
+     * This will be injected into the payment pages
+     * so you can trigger custom events and track payment metrics.
+     */
+    public function getGoogleAnalyticsCode(): ?string
+    {
+        return $this->getParameter('google_analytics');
+    }
+
+    /**
+     * Google analytics code.
+     *
+     * Your Google Analytics Site Id.
+     * This will be injected into the payment pages
+     * so you can trigger custom events and track payment metrics.
+     */
+    public function setGoogleAnalyticsCode(string $value): AbstractRequest
+    {
+        return $this->setParameter('google_analytics', $value);
+    }
+
+    /**
+     * Get items HTML
+     */
+    public function getItemsHtml(): ?string
+    {
+        return $this->getParameter('itemsHtml');
+    }
+
+    /**
+     * Get items HTML
+     */
+    public function setItemsHtml(string $itemsHtml): AbstractRequest
+    {
+        return $this->setParameter('itemsHtml', $itemsHtml);
+    }
+
+    /**
+     * Get the payment options.
+     *
+     * @return mixed[]
+     */
+    protected function getPaymentData(): array
+    {
+        $data = [
+            'cancel_url'   => $this->getCancelUrl(),
+            'close_window' => $this->getCloseWindow(),
+            'notification_url' => $this->getNotifyUrl(),
+            'redirect_url'   => $this->getReturnUrl(),
+        ];
+
+        return \array_filter($data);
+    }
+
+    /**
+     * Customer information.
+     *
+     * This function returns all the provided
+     * client related parameters.
+     *
+     * @return mixed[]
+     */
+    public function getCustomerData(): array
+    {
+        $data = [
+            'disable_send_mail' => $this->getSendMail(),
+            'locale'            => $this->getLocale(),
+        ];
+
+        /** @psalm-suppress DocblockTypeContradiction */
+        if (null === $card = $this->getCard()) {
+            return \array_filter($data);
         }
 
-        $data->addAttribute('ua', $this->userAgent);
+        $cardData = [
+            'address1'     => $card->getAddress1(),
+            'address2'     => $card->getAddress2(),
+            'city'         => $card->getCity(),
+            'country'      => $card->getCountry(),
+            'email'        => $card->getEmail(),
+            'first_name'   => $card->getFirstName(),
+            'house_number' => $this->getVar1(),
+            'last_name'    => $card->getLastName(),
+            'phone'        => $card->getPhone(),
+            'state'        => $card->getState(),
+            'zip_code'     => $card->getPostcode(),
+        ];
 
-        $merchant = $data->addChild('merchant');
-        $merchant->addChild('account', $this->getAccountId());
-        $merchant->addChild('site_id', $this->getSiteId());
-        $merchant->addChild('site_secure_code', $this->getSiteCode());
-        $merchant->addChild('notification_url', htmlspecialchars($this->getNotifyUrl()));
-        $merchant->addChild('cancel_url', htmlspecialchars($this->getCancelUrl()));
-        $merchant->addChild('redirect_url', htmlspecialchars($this->getReturnUrl()));
+        return \array_filter(
+            \array_merge($data, $cardData)
+        );
+    }
 
-        /** @var CreditCard $card */
-        $card = $this->getCard();
-        $customer = $data->addChild('customer');
-        $customer->addChild('ipaddress', $this->getClientIp());
-        $customer->addChild('locale', $this->getLanguage());
-        $customer->addChild('email', $card->getEmail());
-        $customer->addChild('firstname', $card->getFirstName());
-        $customer->addChild('lastname', $card->getLastName());
-        $customer->addChild('address1', $card->getAddress1());
-        $customer->addChild('address2', $card->getAddress2());
-        $customer->addChild('zipcode', $card->getPostcode());
-        $customer->addChild('city', $card->getCity());
-        $customer->addChild('country', $card->getCountry());
-        $customer->addChild('phone', $card->getPhone());
+    /**
+     * Get gateway data.
+     *
+     * @return mixed[]
+     */
+    protected function getGatewayData(): array
+    {
+        return \array_filter(['issuer_id' => $this->getIssuer()]);
+    }
 
-        $data->addChild('google_analytics', $this->getGoogleAnalyticsCode());
+    /**
+     * Get itembag data.
+     *
+     * @return mixed[]
+     */
+    protected function getItemBagData(): array
+    {
+        $items = [];
 
-        $transaction = $data->addChild('transaction');
-        $transaction->addChild('id', $this->getTransactionId());
-        $transaction->addChild('currency', $this->getCurrency());
-        $transaction->addChild('amount', $this->getAmountInteger());
-        $transaction->addChild('description', $this->getDescription());
-        $transaction->addChild('var1', $this->getExtraData1());
-        $transaction->addChild('var2', $this->getExtraData2());
-        $transaction->addChild('var3', $this->getExtraData3());
-        $transaction->addChild('gateway', $this->getGateway());
-
-        if ($items = $this->getItems()) {
-            $itemsHtml = '<ul>';
-            foreach ($items as $item) {
-                $itemsHtml .= "<li>{$item['quantity']} x {$item['name']}</li>";
+        if (null !== $itemBag = $this->getItems()) {
+            foreach ($itemBag->all() as $item) {
+                $items[] = [
+                    'name' => $item->getName(),
+                    'description' => $item->getDescription(),
+                    'quantity' => $item->getQuantity(),
+                    'unit_price' => $item->getPrice(),
+                ];
             }
-            $itemsHtml .= '</ul>';
-            $transaction->addChild('items', htmlspecialchars($itemsHtml));
         }
 
-        if ('IDEAL' === $this->getGateway() && $this->getIssuer()) {
-            $gatewayInfo = $data->addChild('gatewayinfo');
-            $gatewayInfo->addChild('issuerid', $this->getIssuer());
-        }
-
-        $data->addChild('signature', $this->generateSignature());
-
-        return $data;
+        return $items;
     }
 
     /**
-     * {@inheritdoc}
+     * Get the raw data array for this message. The format of this varies from gateway to
+     * gateway, but will usually be either an associative array, or a SimpleXMLElement.
+     *
+     * @return mixed[]
+     *
+     * @throws InvalidRequestException
      */
-    public function sendData($data)
+    public function getData(): array
     {
-        $httpResponse = $this->httpClient->request(
-            'POST',
-            $this->getEndpoint(),
-            $this->getHeaders(),
-            $data->asXML()
+        $this->validate(
+            'amount',
+            'currency',
+            'description',
+            'transactionId',
+            'type'
         );
 
-        $this->response =  new PurchaseResponse(
+        // Direct order.
+        if ('direct' === $this->getType()) {
+            $this->validate('gateway');
+        }
+
+        // When the gateway is set to IDEAL,
+        // the issuer parameter is required.
+        if ('direct' === $this->getType() && 'IDEAL' === $this->getGateway()) {
+            $this->validate('issuer');
+        }
+
+        $data = [
+            'amount'           => $this->getAmountInteger(),
+            'currency'         => $this->getCurrency(),
+            'days_active'      => $this->getDaysActive(),
+            'description'      => $this->getDescription(),
+            'gateway'          => $this->getGateway(),
+            'google_analytics' => $this->getGoogleAnalyticsCode(),
+            'items'            => $this->getItemsHtml(),
+            'manual'           => $this->getManual(),
+            'order_id'         => $this->getTransactionId(),
+            'recurring_id'     => $this->getRecurringId(),
+            'type'             => $this->getType(),
+            'var1'             => $this->getVar1(),
+            'var2'             => $this->getVar2(),
+            'var3'             => $this->getVar3(),
+        ];
+
+        $paymentData = $this->getPaymentData();
+
+        if (! empty($paymentData)) {
+            $data['payment_options'] = $paymentData;
+        }
+
+        $customerData = $this->getCustomerData();
+
+        if (! empty($customerData)) {
+            $data['customer'] = $customerData;
+        }
+
+        $gatewayData = $this->getGatewayData();
+
+        if (! empty($gatewayData)) {
+            $data['gateway_info'] = $gatewayData;
+        }
+
+        $getItemBagData = $this->getItemBagData();
+
+        if (! empty($getItemBagData)) {
+            $data['shopping_cart']['items'] = $getItemBagData;
+        }
+
+        return \array_filter($data);
+    }
+
+    /**
+     * Send the request with specified data
+     *
+     * @param mixed $data
+     *
+     * @throws InvalidRequestException
+     */
+    public function sendData($data): PurchaseResponse
+    {
+        $httpResponse = $this->sendRequest('POST', '/orders', \json_encode($data));
+
+        $this->response = new PurchaseResponse(
             $this,
-            simplexml_load_string($httpResponse->getBody()->getContents())
+            \json_decode($httpResponse->getBody()->getContents(), true)
         );
 
         return $this->response;
-    }
-
-    /**
-     * Generate signature.
-     *
-     * @return string
-     */
-    protected function generateSignature()
-    {
-        return md5(
-            $this->getAmountInteger().
-            $this->getCurrency().
-            $this->getAccountId().
-            $this->getSiteId().
-            $this->getTransactionId()
-        );
     }
 }

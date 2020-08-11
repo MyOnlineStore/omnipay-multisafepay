@@ -1,51 +1,62 @@
 <?php
-/**
- * MultiSafepay XML Api Fetch Issuers Request.
- */
+declare(strict_types=1);
 
-namespace Omnipay\MultiSafepay\Message;
+namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 
-use SimpleXMLElement;
+use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
- * MultiSafepay XML Api Fetch Issuers Request.
+ * MultiSafepay Rest Api Fetch Issuers Request.
  *
- * @deprecated This API is deprecated and will be removed in
- * an upcoming version of this package. Please switch to the Rest API.
+ * Some payment providers require you to specify a issuer.
+ * This request provides a list of all possible issuers
+ * for the specified gateway.
+ *
+ * Currently IDEAL is the only provider which requires an issuer.
+ *
+ * <code>
+ *   $request = $gateway->fetchIssuers();
+ *   $request->setPaymentMethod('IDEAL');
+ *   $response = $request->send();
+ *   $issuers = $response->getIssuers();
+ *   print_r($issuers);
+ * </code>
+ *
+ * @link https://www.multisafepay.com/documentation/doc/API-Reference
  */
-class FetchIssuersRequest extends AbstractRequest
+final class FetchIssuersRequest extends Request
 {
     /**
-     * {@inheritdoc}
+     * Get the required data for the API request.
+     *
+     * @return mixed[]
+     *
+     * @throws InvalidRequestException
      */
-    public function getData()
+    public function getData(): array
     {
-        $data = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><idealissuers/>');
-        $data->addAttribute('ua', $this->userAgent);
+        $this->validate('paymentMethod');
 
-        $merchant = $data->addChild('merchant');
-        $merchant->addChild('account', $this->getAccountId());
-        $merchant->addChild('site_id', $this->getSiteId());
-        $merchant->addChild('site_secure_code', $this->getSiteCode());
-
-        return $data;
+        return ['paymentMethod' => $this->getPaymentMethod()];
     }
 
     /**
-     * {@inheritdoc}
+     * Execute the API request.
+     *
+     * @param mixed $data
+     *
+     * @throws InvalidRequestException
      */
-    public function sendData($data)
+    public function sendData($data): FetchIssuersResponse
     {
-        $httpResponse = $this->httpClient->request(
-            'POST',
-            $this->getEndpoint(),
-            $this->getHeaders(),
-            $data->asXML()
+        $httpResponse = $this->sendRequest(
+            'GET',
+            '/issuers/'.$data['paymentMethod']
         );
 
         $this->response = new FetchIssuersResponse(
             $this,
-            simplexml_load_string($httpResponse->getBody()->getContents())
+            \json_decode($httpResponse->getBody()->getContents(), true)
         );
 
         return $this->response;

@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Fri, 05 Feb 2016 09:18:54 GMT
+Server: Apache
+Vary: Accept-Encoding
+Content-Length: 108
+Content-Type: application/json; charset=UTF-8;
+
+{
+    "success": false,
+    "data": {},
+    "error_code": 1006,
+    "error_info": "Invalid transaction ID"
+}

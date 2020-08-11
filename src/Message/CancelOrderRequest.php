@@ -6,22 +6,13 @@ namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
- * MultiSafepay Rest Api Complete Purchase Request.
+ * Cancel an order
  *
- * ### Example
- *
- * <code>
- *   $transaction = $gateway->completePurchase();
- *   $transaction->setTransactionId($transactionId);
- *   $response = $transaction->send();
- *   print_r($response->getData());
- * </code>
+ * @link https://docs.multisafepay.com/api/#update-an-order
  */
-final class CompletePurchaseRequest extends Request
+final class CancelOrderRequest extends Request
 {
     /**
-     * Get the required data from the API request.
-     *
      * @return mixed[]
      *
      * @throws InvalidRequestException
@@ -34,20 +25,19 @@ final class CompletePurchaseRequest extends Request
     }
 
     /**
-     * Send the API request.
-     *
-     * @param mixed $data
+     * @inheritDoc
      *
      * @throws InvalidRequestException
      */
-    public function sendData($data): CompletePurchaseResponse
+    public function sendData($data)
     {
         $httpResponse = $this->sendRequest(
-            'get',
-            '/orders/'.$data['transactionId']
+            'PATCH',
+            '/orders/'.$data['transactionId'],
+            '{"status":"cancelled"}'
         );
 
-        $this->response = new CompletePurchaseResponse(
+        $this->response = new CancelOrderResponse(
             $this,
             \json_decode($httpResponse->getBody()->getContents(), true)
         );

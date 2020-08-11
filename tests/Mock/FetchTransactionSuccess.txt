@@ -1,0 +1,128 @@
+HTTP/1.1 200 OK
+Date: Fri, 05 Feb 2016 09:18:54 GMT
+Server: Apache
+Vary: Accept-Encoding
+Content-Length: 5828
+Content-Type: application/json; charset=UTF-8;
+
+{
+    "success": true,
+    "data": {
+        "amount": 1600,
+        "amount_refunded": 0,
+        "costs": [
+            {
+                "amount": 0.49,
+                "description": "0.49 For iDEAL Transactions",
+                "transaction_id": 2252311,
+                "type": "SYSTEM"
+            }
+        ],
+        "created": "2020-08-07T15:29:20",
+        "currency": "EUR",
+        "custom_info": {
+            "custom_1": null,
+            "custom_2": null,
+            "custom_3": null
+        },
+        "customer": {
+            "address1": "Foobar 13",
+            "address2": null,
+            "city": "Qux",
+            "country": "NL",
+            "country_name": null,
+            "email": "foo@bar.com",
+            "first_name": "Foo",
+            "house_number": null,
+            "last_name": "Bar",
+            "locale": "nl_NL",
+            "phone1": null,
+            "phone2": "",
+            "state": null,
+            "zip_code": "1234QW"
+        },
+        "description": "Order 4",
+        "fastcheckout": "NO",
+        "financial_status": "completed",
+        "items": "\u003Ctable border=\"0\" cellpadding=\"5\" width=\"100%\"\u003E\n\u003Ctr\u003E\n\u003Cth width=\"10%\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003EQuantity \u003C\/font\u003E\u003C\/th\u003E\n\u003Cth align=\"left\"\u003E\u003C\/th\u003E\n\u003Cth align=\"left\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003EDetails \u003C\/font\u003E\u003C\/th\u003E\n\u003Cth width=\"19%\" align=\"right\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003EPrice \u003C\/font\u003E\u003C\/th\u003E\n\u003C\/tr\u003E\n\u003Ctr\u003E\n\u003Ctd align=\"center\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003E1\u003C\/font\u003E\u003C\/td\u003E\n\u003Ctd width=\"6%\"\u003E\u003C\/td\u003E\n\u003Ctd width=\"65%\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003Etest\u003C\/font\u003E\u003C\/td\u003E\n\u003Ctd align=\"right\"\u003E&#8364;\u003Cfont size=\"2\" face=\"Verdana\"\u003E11.00\u003C\/font\u003E\n\u003C\/td\u003E\n\u003C\/tr\u003E\n\u003Ctr\u003E\n\u003Ctd align=\"center\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003E1\u003C\/font\u003E\u003C\/td\u003E\n\u003Ctd width=\"6%\"\u003E\u003C\/td\u003E\n\u003Ctd width=\"65%\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003EVerzendkosten\u003C\/font\u003E\u003C\/td\u003E\n\u003Ctd align=\"right\"\u003E&#8364;\u003Cfont size=\"2\" face=\"Verdana\"\u003E5.00\u003C\/font\u003E\n\u003C\/td\u003E\n\u003C\/tr\u003E\n\u003Ctr bgcolor=\"#E9F1F7\"\u003E\n\u003Ctd colspan=\"3\" align=\"right\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003EVAT:\u003C\/font\u003E\u003C\/td\u003E\n\u003Ctd align=\"right\"\u003E&#8364;\u003Cfont size=\"2\" face=\"Verdana\"\u003E0.00\u003C\/font\u003E\n\u003C\/td\u003E\n\u003C\/tr\u003E\n\u003Ctr bgcolor=\"#E9F1F7\"\u003E\n\u003Ctd colspan=\"3\" align=\"right\"\u003E\u003Cfont size=\"2\" face=\"Verdana\"\u003ETotal:\u003C\/font\u003E\u003C\/td\u003E\n\u003Ctd align=\"right\"\u003E&#8364;\u003Cfont size=\"2\" face=\"Verdana\"\u003E16.00\u003C\/font\u003E\n\u003C\/td\u003E\n\u003C\/tr\u003E\n\u003C\/table\u003E",
+        "modified": "2020-08-07T15:29:23",
+        "order_adjustment": {
+            "total_adjustment": "0.00",
+            "total_tax": "0.00"
+        },
+        "order_id": "c1c0c4e5-b051-4c0f-8eac-fd0af9996793",
+        "order_total": "16.00",
+        "payment_details": {
+            "account_bic": "INGBNL2A",
+            "account_holder_name": "Jan Jansen",
+            "account_iban": "NL87ABNA0000000001",
+            "account_id": 1,
+            "external_transaction_id": 10060843882446650,
+            "issuer_id": 3151,
+            "recurring_id": "9981080268666844544",
+            "recurring_model": null,
+            "type": "IDEAL"
+        },
+        "payment_methods": [
+            {
+                "account_bic": "INGBNL2A",
+                "account_holder_name": "Jan Jansen",
+                "account_iban": "NL87ABNA0000000001",
+                "account_id": 1,
+                "amount": 1600,
+                "currency": "EUR",
+                "description": "Order 4",
+                "external_transaction_id": 10060843882446650,
+                "payment_description": "iDEAL",
+                "status": "completed",
+                "type": "IDEAL"
+            }
+        ],
+        "reason": "",
+        "reason_code": "",
+        "related_transactions": null,
+        "shopping_cart": {
+            "items": [
+                {
+                    "cashback": "",
+                    "currency": "EUR",
+                    "description": "",
+                    "image": "",
+                    "merchant_item_id": "",
+                    "name": "test",
+                    "options": [],
+                    "product_url": "",
+                    "quantity": 1,
+                    "tax_table_selector": "",
+                    "unit_price": "11.00",
+                    "weight": {
+                        "unit": null,
+                        "value": null
+                    }
+                },
+                {
+                    "cashback": "",
+                    "currency": "EUR",
+                    "description": "",
+                    "image": "",
+                    "merchant_item_id": "",
+                    "name": "Verzendkosten",
+                    "options": [],
+                    "product_url": "",
+                    "quantity": 1,
+                    "tax_table_selector": "",
+                    "unit_price": "5.00",
+                    "weight": {
+                        "unit": null,
+                        "value": null
+                    }
+                }
+            ]
+        },
+        "status": "completed",
+        "transaction_id": 4257177,
+        "var1": null,
+        "var2": null,
+        "var3": null
+    }
+}
