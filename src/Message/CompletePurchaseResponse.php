@@ -16,7 +16,7 @@ namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
  *   print_r($response->getData());
  * </code>
  */
-final class CompletePurchaseResponse extends FetchTransactionResponse
+class CompletePurchaseResponse extends FetchTransactionResponse
 {
     public function isSuccessful(): bool
     {

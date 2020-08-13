@@ -17,7 +17,7 @@ use Omnipay\Common\Exception\InvalidRequestException;
  *   print_r($response->getData());
  * </code>
  */
-final class CompletePurchaseRequest extends Request
+class CompletePurchaseRequest extends Request
 {
     /**
      * Get the required data from the API request.

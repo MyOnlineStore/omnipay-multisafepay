@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 
+use MyOnlineStore\Omnipay\MultiSafepay\Item;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Message\AbstractRequest;
 
@@ -136,10 +137,8 @@ class PurchaseRequest extends Request
      *
      * The unique gateway id to immediately direct the customer to the payment method.
      * You retrieve these gateways using a gateway request.
-     *
-     * @return mixed
      */
-    public function getGateway()
+    public function getGateway(): ?string
     {
         return $this->getParameter('gateway');
     }
@@ -149,10 +148,8 @@ class PurchaseRequest extends Request
      *
      * The unique gateway id to immediately direct the customer to the payment method.
      * You retrieve these gateways using a gateway request.
-     *
-     * @param mixed $value
      */
-    public function setGateway($value): AbstractRequest
+    public function setGateway(string $value): AbstractRequest
     {
         return $this->setParameter('gateway', $value);
     }
@@ -293,7 +290,7 @@ class PurchaseRequest extends Request
      * True if you will send your own bank transfer payment instructions to
      * consumers and do not want MultiSafepay to do this.
      */
-    public function getSendMail(): bool
+    public function getSendMail(): ?bool
     {
         return $this->getParameter('disable_send_mail');
     }
@@ -389,6 +386,7 @@ class PurchaseRequest extends Request
         $cardData = [
             'address1'     => $card->getAddress1(),
             'address2'     => $card->getAddress2(),
+            'birthday'     => $card->getBirthday(),
             'city'         => $card->getCity(),
             'country'      => $card->getCountry(),
             'email'        => $card->getEmail(),
@@ -412,7 +410,32 @@ class PurchaseRequest extends Request
      */
     protected function getGatewayData(): array
     {
-        return \array_filter(['issuer_id' => $this->getIssuer()]);
+        $data = ['issuer_id' => $this->getIssuer()];
+
+        /** @psalm-suppress DocblockTypeContradiction */
+        if (null === $card = $this->getCard()) {
+            return \array_filter($data);
+        }
+
+        switch ($card->getGender()) {
+            case 'M':
+                $gender = 'male';
+                break;
+            case 'F':
+                $gender = 'female';
+                break;
+            default:
+                $gender = null;
+        }
+
+        $cardData = [
+            'birthday' => $card->getBirthday(),
+            'email'    => $card->getEmail(),
+            'phone'    => $card->getPhone(),
+            'gender'   => $gender,
+        ];
+
+        return \array_filter(\array_merge($data, $cardData));
     }
 
     /**
@@ -426,16 +449,60 @@ class PurchaseRequest extends Request
 
         if (null !== $itemBag = $this->getItems()) {
             foreach ($itemBag->all() as $item) {
-                $items[] = [
+                \assert($item instanceof Item);
+
+                $itemData = [
+                    'merchant_item_id' => $item->getId(),
                     'name' => $item->getName(),
                     'description' => $item->getDescription(),
                     'quantity' => $item->getQuantity(),
                     'unit_price' => $item->getPrice(),
                 ];
+
+                if (null !== $taxRate = $item->getTaxRate()) {
+                    $itemData['tax_table_selector'] = $taxRate;
+                }
+
+                $items[] = $itemData;
             }
         }
 
         return $items;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    protected function getTaxTable(): array
+    {
+        $taxTable = [];
+
+        if (null !== $itemBag = $this->getItems()) {
+            foreach ($itemBag->all() as $item) {
+                \assert($item instanceof Item);
+
+                if (null === $taxRate = $item->getTaxRate()) {
+                    continue;
+                }
+
+                if (\in_array($taxRate, \array_column($taxTable, 'name'), true)) {
+                    continue;
+                }
+
+                $taxTable[] = [
+                    'name' => $taxRate,
+                    'rules' => [
+                        ['rate' => $taxRate],
+                    ],
+                ];
+            }
+        }
+
+        if (0 === \count($taxTable)) {
+            return [];
+        }
+
+        return ['alternate' => $taxTable];
     }
 
     /**
@@ -486,26 +553,32 @@ class PurchaseRequest extends Request
 
         $paymentData = $this->getPaymentData();
 
-        if (! empty($paymentData)) {
+        if (!empty($paymentData)) {
             $data['payment_options'] = $paymentData;
         }
 
         $customerData = $this->getCustomerData();
 
-        if (! empty($customerData)) {
+        if (!empty($customerData)) {
             $data['customer'] = $customerData;
         }
 
         $gatewayData = $this->getGatewayData();
 
-        if (! empty($gatewayData)) {
+        if (!empty($gatewayData)) {
             $data['gateway_info'] = $gatewayData;
         }
 
         $getItemBagData = $this->getItemBagData();
 
-        if (! empty($getItemBagData)) {
+        if (!empty($getItemBagData)) {
             $data['shopping_cart']['items'] = $getItemBagData;
+        }
+
+        $taxTable = $this->getTaxTable();
+
+        if (!empty($taxTable)) {
+            $data['checkout_options']['tax_tables'] = $taxTable;
         }
 
         return \array_filter($data);

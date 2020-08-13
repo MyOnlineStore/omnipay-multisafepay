@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace MyOnlineStore\Omnipay\MultiSafepay\Tests\Message;
 
+use MyOnlineStore\Omnipay\MultiSafepay\Item;
 use MyOnlineStore\Omnipay\MultiSafepay\Message\PurchaseRequest;
+use Omnipay\Common\CreditCard;
 use Omnipay\Tests\TestCase;
 
 final class PurchaseRequestTest extends TestCase
@@ -38,6 +40,35 @@ final class PurchaseRequestTest extends TestCase
                 'var1' => 'extra data 1',
                 'var2' => 'extra data 2',
                 'var3' => 'extra data 3',
+                'items' => [
+                    new Item(
+                        [
+                            'name' => 'Foo',
+                            'description' => 'FooBar',
+                            'quantity' => '1',
+                            'price' => '5.95',
+                        ]
+                    ),
+                ],
+                'card' => new CreditCard(
+                    [
+                        'firstName'     => 'Example',
+                        'lastName'      => 'Customer',
+                        'number'        => '4222222222222222',
+                        'expiryMonth'   => '01',
+                        'expiryYear'    => '2020',
+                        'cvv'           => '123',
+                        'email'         => 'customer@example.com',
+                        'phone'         => '0612345678',
+                        'address1'      => '1 Scrubby Creek Road',
+                        'country'       => 'AU',
+                        'city'          => 'Scrubby Creek',
+                        'postalcode'    => '4999',
+                        'state'         => 'QLD',
+                        'gender'        => 'F',
+                        'birthday'      => '1970-07-10',
+                    ]
+                ),
             ]
         );
     }

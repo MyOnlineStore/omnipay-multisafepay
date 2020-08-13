@@ -17,11 +17,25 @@ final class GatewayTest extends GatewayTestCase
         $this->gateway->setApiKey('123456789');
     }
 
+    public function testAuthorizeRequest(): void
+    {
+        $request = $this->gateway->authorize(['amount' => 10.00]);
+
+        self::assertEquals(10.00, $request->getAmount());
+    }
+
     public function testCapture(): void
     {
         $request = $this->gateway->capture(['transactionId' => 'barfoo']);
 
         self::assertEquals('barfoo', $request->getTransactionId());
+    }
+
+    public function testCompleteAuthorizeRequest(): void
+    {
+        $request = $this->gateway->completeAuthorize(['amount' => 10.00]);
+
+        self::assertEquals(10.00, $request->getAmount());
     }
 
     public function testCompletePurchaseRequest(): void

@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace MyOnlineStore\Omnipay\MultiSafepay;
 
+use MyOnlineStore\Omnipay\MultiSafepay\Message\AuthorizeRequest;
 use MyOnlineStore\Omnipay\MultiSafepay\Message\CancelOrderRequest;
 use MyOnlineStore\Omnipay\MultiSafepay\Message\CaptureRequest;
+use MyOnlineStore\Omnipay\MultiSafepay\Message\CompleteAuthorizeRequest;
 use MyOnlineStore\Omnipay\MultiSafepay\Message\CompletePurchaseRequest;
 use MyOnlineStore\Omnipay\MultiSafepay\Message\FetchIssuersRequest;
 use MyOnlineStore\Omnipay\MultiSafepay\Message\FetchPaymentMethodsRequest;
@@ -88,9 +90,6 @@ use Omnipay\Common\AbstractGateway;
  */
 final class Gateway extends AbstractGateway
 {
-    /**
-     * @{inheritdoc}
-     */
     public function getName(): string
     {
         return 'MultiSafepay REST';
@@ -119,7 +118,7 @@ final class Gateway extends AbstractGateway
      *
      * The default language is English.
      */
-    public function getLocale(): string
+    public function getLocale(): ?string
     {
         return $this->getParameter('locale');
     }
@@ -163,86 +162,112 @@ final class Gateway extends AbstractGateway
     }
 
     /**
-     * Capture a payment by setting the status to shipped.
-     *
+     * @param mixed[] $parameters
+     */
+    public function authorize(array $parameters = []): AuthorizeRequest
+    {
+        $request = $this->createRequest(AuthorizeRequest::class, $parameters);
+        \assert($request instanceof AuthorizeRequest);
+
+        return $request;
+    }
+
+    /**
      * @param mixed[] $parameters
      */
     public function capture(array $parameters = []): CaptureRequest
     {
-        return $this->createRequest(CaptureRequest::class, $parameters);
+        $request = $this->createRequest(CaptureRequest::class, $parameters);
+        \assert($request instanceof CaptureRequest);
+
+        return $request;
     }
 
     /**
-     * Complete a payment request.
-     *
+     * @param mixed[] $parameters
+     */
+    public function completeAuthorize(array $parameters = []): CompleteAuthorizeRequest
+    {
+        $request = $this->createRequest(CompleteAuthorizeRequest::class, $parameters);
+        \assert($request instanceof CompleteAuthorizeRequest);
+
+        return $request;
+    }
+
+    /**
      * @param mixed[] $parameters
      */
     public function completePurchase(array $parameters = []): CompletePurchaseRequest
     {
-        return $this->createRequest(CompletePurchaseRequest::class, $parameters);
+        $request = $this->createRequest(CompletePurchaseRequest::class, $parameters);
+        \assert($request instanceof CompletePurchaseRequest);
+
+        return $request;
     }
 
     /**
-     * Retrieve issuers for gateway.
-     *
      * @param mixed[] $parameters
      */
     public function fetchIssuers(array $parameters = []): FetchIssuersRequest
     {
-        return $this->createRequest(FetchIssuersRequest::class, $parameters);
+        $request = $this->createRequest(FetchIssuersRequest::class, $parameters);
+        \assert($request instanceof FetchIssuersRequest);
+
+        return $request;
     }
 
     /**
-     * Retrieve payment methods active on the given MultiSafepay
-     * account.
-     *
      * @param mixed[] $parameters
      */
     public function fetchPaymentMethods(array $parameters = []): FetchPaymentMethodsRequest
     {
-        return $this->createRequest(FetchPaymentMethodsRequest::class, $parameters);
+        $request = $this->createRequest(FetchPaymentMethodsRequest::class, $parameters);
+        \assert($request instanceof FetchPaymentMethodsRequest);
+
+        return $request;
     }
 
     /**
-     * Retrieve transaction by the given identifier.
-     *
      * @param mixed[] $parameters
      */
     public function fetchTransaction(array $parameters = []): FetchTransactionRequest
     {
-        return $this->createRequest(FetchTransactionRequest::class, $parameters);
+        $request = $this->createRequest(FetchTransactionRequest::class, $parameters);
+        \assert($request instanceof FetchTransactionRequest);
+
+        return $request;
     }
 
     /**
-     * Create a purchase request.
-     *
-     * MultisafePay support different types of transactions,
-     * such as iDEAL, Paypal and CreditCard payments.
-     *
      * @param mixed[] $parameters
      */
     public function purchase(array $parameters = []): PurchaseRequest
     {
-        return $this->createRequest(PurchaseRequest::class, $parameters);
+        $request = $this->createRequest(PurchaseRequest::class, $parameters);
+        \assert($request instanceof PurchaseRequest);
+
+        return $request;
     }
 
     /**
-     * Create a refund.
-     *
      * @param mixed[] $parameters
      */
     public function refund(array $parameters = []): RefundRequest
     {
-        return $this->createRequest(RefundRequest::class, $parameters);
+        $request = $this->createRequest(RefundRequest::class, $parameters);
+        \assert($request instanceof RefundRequest);
+
+        return $request;
     }
 
     /**
-     * Cancel a payment request.
-     *
      * @param mixed[] $parameters
      */
     public function void(array $parameters = []): CancelOrderRequest
     {
-        return $this->createRequest(CancelOrderRequest::class, $parameters);
+        $request = $this->createRequest(CancelOrderRequest::class, $parameters);
+        \assert($request instanceof CancelOrderRequest);
+
+        return $request;
     }
 }

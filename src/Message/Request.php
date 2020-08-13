@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 
+use MyOnlineStore\Omnipay\MultiSafepay\Item;
 use Omnipay\Common\Exception\InvalidRequestException;
+use Omnipay\Common\ItemBag;
 use Omnipay\Common\Message\AbstractRequest;
 use Psr\Http\Message\ResponseInterface;
 
@@ -90,6 +92,30 @@ abstract class Request extends AbstractRequest
     public function setApiKey(string $value): Request
     {
         return $this->setParameter('apiKey', $value);
+    }
+
+    /**
+     * @param Item[]|ItemBag|mixed[] $items
+     *
+     * @return static
+     */
+    public function setItems($items): self
+    {
+        $validatedItems = [];
+
+        foreach ($items as $item) {
+            if (\is_array($item)) {
+                $item = new Item($item);
+            }
+
+            if (!$item instanceof Item) {
+                throw new \InvalidArgumentException('Invalid item given');
+            }
+
+            $validatedItems[] = $item;
+        }
+
+        return parent::setItems($validatedItems);
     }
 
     public function getEndpoint(): string
