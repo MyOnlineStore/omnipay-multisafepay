@@ -6,22 +6,14 @@ namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
- * MultiSafepay Rest Api Complete Purchase Request.
+ * Capture an order
  *
- * ### Example
- *
- * <code>
- *   $transaction = $gateway->completePurchase();
- *   $transaction->setTransactionId($transactionId);
- *   $response = $transaction->send();
- *   print_r($response->getData());
- * </code>
+ * @link https://docs.multisafepay.com/api/#update-an-order
+ * @link https://docs.multisafepay.com/payment-methods/billing-suite/klarna/#activate-an-order
  */
-class CompletePurchaseRequest extends Request
+final class CaptureRequest extends Request
 {
     /**
-     * Get the required data from the API request.
-     *
      * @return mixed[]
      *
      * @throws InvalidRequestException
@@ -34,20 +26,19 @@ class CompletePurchaseRequest extends Request
     }
 
     /**
-     * Send the API request.
-     *
-     * @param mixed $data
+     * @inheritDoc
      *
      * @throws InvalidRequestException
      */
-    public function sendData($data): CompletePurchaseResponse
+    public function sendData($data)
     {
         $httpResponse = $this->sendRequest(
-            'get',
-            '/orders/'.$data['transactionId']
+            'PATCH',
+            \sprintf('/orders/%s', $data['transactionId']),
+            '{"status":"shipped"}'
         );
 
-        $this->response = new CompletePurchaseResponse(
+        $this->response = new CaptureResponse(
             $this,
             \json_decode($httpResponse->getBody()->getContents(), true)
         );

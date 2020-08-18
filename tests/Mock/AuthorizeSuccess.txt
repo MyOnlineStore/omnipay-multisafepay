@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+Date: Thu, 13 Aug 2020 15:36:07 GMT
+Server: Apache
+Vary: Accept-Encoding
+Content-Length: 225
+Content-Type: application/json; charset=UTF-8;
+
+{
+    "success": true,
+    "data": {
+        "order_id": "f4b5ea53-b4e4-4c81-a92e-f7106c7a78d5",
+        "payment_url": "https:\/\/testpayv2.multisafepay.com\/connect\/82Cr8PsD1cGj43XsNGAEM9RE4REYGfwdXIQ\/?lang=nl_NL"
+    }
+}

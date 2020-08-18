@@ -1,42 +1,50 @@
 <?php
-/**
- * MultiSafepay XML Api Fetch Payment Methods Response.
- */
+declare(strict_types=1);
 
-namespace Omnipay\MultiSafepay\Message;
+namespace MyOnlineStore\Omnipay\MultiSafepay\Message;
 
 use Omnipay\Common\Message\FetchPaymentMethodsResponseInterface;
 use Omnipay\Common\PaymentMethod;
 
 /**
- * MultiSafepat XML Api Fetch Payment Methods Response.
+ * MultiSafepay Rest Api Fetch Payment Methods Response.
  *
- * @deprecated This API is deprecated and will be removed in
- * an upcoming version of this package. Please switch to the Rest API.
+ * The MultiSafepay API supports multiple payment gateways, such as
+ * iDEAL, Paypal or CreditCard.
+ *
+ * This response class will be returned when using the
+ * RestFetchPaymentMethodsRequest. And provides a list of
+ * all supported payment methods.
+ *
+ * ### Example
+ *
+ * <code>
+ *    $request = $gateway->fetchPaymentMethods();
+ *    $response = $request->send();
+ *    $paymentMethods = $response->getPaymentMethods();
+ *    print_r($paymentMethods);
+ * </code>
  */
-class FetchPaymentMethodsResponse extends AbstractResponse implements FetchPaymentMethodsResponseInterface
+final class FetchPaymentMethodsResponse extends Response implements FetchPaymentMethodsResponseInterface
 {
     /**
-     * {@inheritdoc}
-     */
-    public function isSuccessful()
-    {
-        return isset($this->data->gateways);
-    }
-
-    /**
-     * Return available payment methods as an associative array.
+     * Get the returned list of payment methods.
      *
-     * @return array
+     * These represent separate payment methods which the user must choose between.
+     *
+     * @return PaymentMethod[]
      */
-    public function getPaymentMethods()
+    public function getPaymentMethods(): array
     {
-        $result = [];
+        $paymentMethods = [];
 
-        foreach ($this->data->gateways->gateway as $gateway) {
-            $result[] = new PaymentMethod((string) $gateway->id, (string) $gateway->description);
+        foreach ($this->data['data'] as $method) {
+            $paymentMethods[] = new PaymentMethod(
+                $method['id'],
+                $method['description']
+            );
         }
 
-        return $result;
+        return $paymentMethods;
     }
 }

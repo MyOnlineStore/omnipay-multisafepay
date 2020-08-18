@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Date: Thu, 13 Aug 2020 15:36:07 GMT
+Server: Apache
+Vary: Accept-Encoding
+Content-Length: 167
+Content-Type: application/json; charset=UTF-8;
+
+{
+  "success": false,
+  "data": {},
+  "error_code": 1027,
+  "error_info": "Totaalbedrag van de winkelwagen moet gelijk zijn aan het bedrag van de transactie"
+}
