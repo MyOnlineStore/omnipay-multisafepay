@@ -66,7 +66,7 @@ use Omnipay\Common\AbstractGateway;
  *   // Create the gateway
  *   $gateway = Omnipay::create('MultiSafepay_Rest');
  *
- *   // Initialise the gateway
+ *   // Initialize the gateway
  *   $gateway->initialize(array(
  *       'apiKey' => 'API-KEY',
  *       'locale' => 'en',
