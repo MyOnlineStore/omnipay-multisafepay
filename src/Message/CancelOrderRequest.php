@@ -33,7 +33,7 @@ final class CancelOrderRequest extends Request
     {
         $httpResponse = $this->sendRequest(
             'PATCH',
-            '/orders/'.$data['transactionId'],
+            '/orders/' . $data['transactionId'],
             '{"status":"cancelled"}'
         );
 

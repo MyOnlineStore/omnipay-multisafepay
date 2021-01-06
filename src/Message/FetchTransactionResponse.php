@@ -27,8 +27,7 @@ class FetchTransactionResponse extends Response
      */
     public function isSuccessful(): bool
     {
-        /** @psalm-suppress RedundantConditionGivenDocblockType */
-
+        /** @psalm-suppress RedundantCondition */
         return parent::isSuccessful() && null !== $this->getTransactionId();
     }
 

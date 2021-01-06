@@ -42,12 +42,12 @@
     "require": {
         "php": "^7.2",
         "ext-json": "*",
-        "omnipay/common": "^3",
-        "omnipay/tests": "^4.0"
+        "omnipay/common": "^3"
     },
     "require-dev": {
-        "myonlinestore/coding-standard": "^2.0",
-        "phpunit/phpunit": "^8.0",
+        "myonlinestore/coding-standard": "^3.0",
+        "omnipay/tests": "^4.1",
+        "phpunit/phpunit": "^8.5",
         "vimeo/psalm": "^3.13"
     },
     "config": {

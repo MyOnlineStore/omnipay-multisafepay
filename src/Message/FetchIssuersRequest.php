@@ -51,7 +51,7 @@ final class FetchIssuersRequest extends Request
     {
         $httpResponse = $this->sendRequest(
             'GET',
-            '/issuers/'.$data['paymentMethod']
+            '/issuers/' . $data['paymentMethod']
         );
 
         $this->response = new FetchIssuersResponse(

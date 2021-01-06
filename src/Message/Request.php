@@ -153,7 +153,7 @@ abstract class Request extends AbstractRequest
     {
         return $this->httpClient->request(
             $method,
-            $this->getEndpoint().$endpoint,
+            $this->getEndpoint() . $endpoint,
             $this->getHeaders(),
             $data
         );

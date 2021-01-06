@@ -66,7 +66,7 @@ final class RefundRequest extends Request
     {
         $httpResponse = $this->sendRequest(
             'POST',
-            '/orders/'.$data['id'].'/refunds',
+            '/orders/' . $data['id'] . '/refunds',
             \json_encode($data)
         );
 

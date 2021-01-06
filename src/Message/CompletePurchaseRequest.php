@@ -44,7 +44,7 @@ class CompletePurchaseRequest extends Request
     {
         $httpResponse = $this->sendRequest(
             'get',
-            '/orders/'.$data['transactionId']
+            '/orders/' . $data['transactionId']
         );
 
         $this->response = new CompletePurchaseResponse(
